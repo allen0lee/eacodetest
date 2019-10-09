@@ -30,14 +30,13 @@ app.get('/festivals', (req, res) => {
     console.log('##################################')
 
     let recordLabels = []
-    let displayBands = [] // bands with label record label 
+    let bandsWithRecordLabels = [] // bands with label record label 
 
     festivals.forEach((festival) => { 
       festival.bands.forEach((band) => {
         if(band.recordLabel != undefined && band.recordLabel != '') {
-          // recordLabels.push({recordLabel: band.recordLabel, bandName: band.name})
           recordLabels.push(band.recordLabel)
-          displayBands.push({
+          bandsWithRecordLabels.push({
             bandName: band.name, 
             recordLabel: band.recordLabel, // some bands don't have recordLabel
             festivalName: festival.name // some bands don't attend any festival, will become undefined here
@@ -46,7 +45,7 @@ app.get('/festivals', (req, res) => {
       }) 
     })
 
-    console.log(displayBands)
+    console.log(bandsWithRecordLabels)
 
     let sortedRecordLabels = _.uniq(recordLabels.sort())
     // let sortedRecordLabels = recordLabels.sort()
@@ -55,37 +54,30 @@ app.get('/festivals', (req, res) => {
 
     console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
 
-    let sortedFestivals = []
+    // let sortedFestivals = []
 
     // let bands = []
     // bands.push({name:  , festivals: []})
 
-    festivals.forEach((festival) => {
-      displayBands.forEach((displayBand) => {
-        sortedFestivals.push({recordLabel: displayBand.recordLabel, band: displayBand.bandName, festival: festival.name})
-      }) 
-    })
+    // festivals.forEach((festival) => {
+    //   bandsWithRecordLabels.forEach((displayBand) => {
+    //     sortedFestivals.push({recordLabel: displayBand.recordLabel, band: displayBand.bandName, festival: festival.name})
+    //   }) 
+    // })
 
-    console.log(sortedFestivals)
+    // console.log(sortedFestivals)
 
 
     console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$')
 
     sortedRecordLabels.forEach((sortedRecordLabel) => {
-      // console.log(sortedRecordLabel.recordLabel)
       console.log(sortedRecordLabel)
 
-      sortedFestivals.forEach((sortedFestival) => {
-        // if(sortedFestival.recordLabel == sortedRecordLabel.recordLabel) {
-        if(sortedFestival.recordLabel == sortedRecordLabel) {
-        // if(sortedFestival.recordLabel == sortedRecordLabel && sortedFestival.band == ) {
-          console.log(`  ${sortedFestival.band}`)
-          // if(sortedFestival.band == sortedRecordLabel.bandName) {
-            // console.log(`    ${sortedFestival.festival}`)
-          // }
+      bandsWithRecordLabels.forEach((band) => {
+        if(band.recordLabel == sortedRecordLabel) {
+          console.log(`  ${band.bandName}`)
         }
       })
-
     })
 
 
