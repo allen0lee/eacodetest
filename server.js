@@ -23,93 +23,95 @@ app.get('/festivals', (req, res) => {
     let festivals = apiRes.data
     console.log(festivals)
 
-    festivals.forEach((festival) => {
-      console.log(festival.bands)
-    }) 
-
-    console.log('##################################')
-
-    let recordLabels = []
-    let bandsWithRecordLabels = [] // bands with record labels, but some bands don't have recordLabel 
-
-    let bandsWithFestivals = [] // this shows each band attends what festival, but some bands don't attend any festival
-
-    festivals.forEach((festival) => { 
-      festival.bands.forEach((band) => {
-        if(band.recordLabel != undefined && band.recordLabel != '') {
-          recordLabels.push(band.recordLabel)
-
-          bandsWithRecordLabels.push({
-            bandName: band.name, 
-            recordLabel: band.recordLabel
-          })
-          
-          bandsWithFestivals.push({
-            bandName: band.name,
-            festivalName: festival.name // some bands don't attend any festival, will become undefined here            
-          })
-        }
-      }) 
-    })
-
-    let sortedRecordLabels = _.uniq(recordLabels.sort())
-    // let sortedRecordLabels = recordLabels.sort()
-    console.log(sortedRecordLabels)
-
-    // sort band names in alphabetical order
-    bandsWithRecordLabels.sort((a, b) => {
-      if (a.bandName < b.bandName) {
-        return -1
-      }
-      if (a.bandName > b.bandName) {
-        return 1
-      }
-      return 0
-    })
-    console.log(bandsWithRecordLabels)
-
-    console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
-
-    // sort festival names in alphabetical order
-    bandsWithFestivals.sort((a, b) => {
-      if (a.festivalName < b.festivalName) {
-        return -1
-      }
-      if (a.festivalName > b.festivalName) {
-        return 1
-      }
-      return 0
-    })
-    console.log(bandsWithFestivals)
-
-
-    console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$')
-
     let result = "" // hold the reorganized data
 
-    sortedRecordLabels.forEach((sortedRecordLabel) => {
-      console.log(sortedRecordLabel)
-      result = result + sortedRecordLabel + "\n"
+    if(festivals != "") { // sometimes api does not return data, gives back "" instead
+      
+      festivals.forEach((festival) => {
+        console.log(festival.bands)
+      }) 
 
-      bandsWithRecordLabels.forEach((band) => {
-        if(band.recordLabel == sortedRecordLabel) {
-          console.log(`  ${band.bandName}`)
-          result = result + "  " + band.bandName + "\n"
-          bandsWithFestivals.forEach((bandAndFestival) => {
-            if(band.bandName == bandAndFestival.bandName) {
-              if(bandAndFestival.festivalName != undefined) {
-                console.log(`    ${bandAndFestival.festivalName}`)
-                result = result + "    " + bandAndFestival.festivalName + "\n"
-              } 
-            }
-          })
-        }
+      console.log('##################################')
+
+      let recordLabels = []
+      let bandsWithRecordLabels = [] // bands with record labels, but some bands don't have recordLabel 
+
+      let bandsWithFestivals = [] // this shows each band attends what festival, but some bands don't attend any festival
+
+      festivals.forEach((festival) => { 
+        festival.bands.forEach((band) => {
+          if(band.recordLabel != undefined && band.recordLabel != '') {
+            recordLabels.push(band.recordLabel)
+
+            bandsWithRecordLabels.push({
+              bandName: band.name, 
+              recordLabel: band.recordLabel
+            })
+            
+            bandsWithFestivals.push({
+              bandName: band.name,
+              recordLabel: band.recordLabel,
+              festivalName: festival.name // some bands don't attend any festival, will become undefined here            
+            })
+          }
+        }) 
       })
-    })
 
-    console.log('%%%%%%%%')
-    console.log(result)
+      let sortedRecordLabels = _.uniq(recordLabels.sort())
+      // let sortedRecordLabels = recordLabels.sort()
+      console.log(sortedRecordLabels)
 
+      // sort band names in alphabetical order
+      bandsWithRecordLabels.sort((a, b) => {
+        if (a.bandName < b.bandName) {
+          return -1
+        }
+        if (a.bandName > b.bandName) {
+          return 1
+        }
+        return 0
+      })
+      console.log(bandsWithRecordLabels)
+
+      console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+
+      // sort festival names in alphabetical order
+      bandsWithFestivals.sort((a, b) => {
+        if (a.festivalName < b.festivalName) {
+          return -1
+        }
+        if (a.festivalName > b.festivalName) {
+          return 1
+        }
+        return 0
+      })
+      console.log(bandsWithFestivals)
+
+      console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$')
+
+      sortedRecordLabels.forEach((sortedRecordLabel) => {
+        console.log(sortedRecordLabel)
+        result = result + sortedRecordLabel + "\n"
+
+        bandsWithRecordLabels.forEach((band) => {
+          if(band.recordLabel == sortedRecordLabel) {
+            console.log(`  ${band.bandName}`)
+            result = result + "  " + band.bandName + "\n"
+            bandsWithFestivals.forEach((bandAndFestival) => {
+              if(band.bandName == bandAndFestival.bandName && band.recordLabel == bandAndFestival.recordLabel) { // a band can attend another festival under the management of another record label eg. "Wild Antelop"
+                if(bandAndFestival.festivalName != undefined) {
+                  console.log(`    ${bandAndFestival.festivalName}`)
+                  result = result + "    " + bandAndFestival.festivalName + "\n"
+                } 
+              }
+            })
+          }
+        })
+      })
+
+      console.log('%%%%%%%%')
+      console.log(result)      
+    }
 
     res.render('festivals', {result: result})
   })
