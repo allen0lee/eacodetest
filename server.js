@@ -52,48 +52,66 @@ app.get('/festivals', (req, res) => {
       }) 
     })
 
-    console.log(bandsWithRecordLabels)
-
     let sortedRecordLabels = _.uniq(recordLabels.sort())
     // let sortedRecordLabels = recordLabels.sort()
     console.log(sortedRecordLabels)
 
+    // sort band names in alphabetical order
+    bandsWithRecordLabels.sort((a, b) => {
+      if (a.bandName < b.bandName) {
+        return -1
+      }
+      if (a.bandName > b.bandName) {
+        return 1
+      }
+      return 0
+    })
+    console.log(bandsWithRecordLabels)
 
     console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
 
-    // let sortedFestivals = []
-
-    // let bands = []
-    // bands.push({name:  , festivals: []})
-
-    // festivals.forEach((festival) => {
-    //   bandsWithRecordLabels.forEach((displayBand) => {
-    //     sortedFestivals.push({recordLabel: displayBand.recordLabel, band: displayBand.bandName, festival: festival.name})
-    //   }) 
-    // })
-
-    // console.log(sortedFestivals)
+    // sort festival names in alphabetical order
+    bandsWithFestivals.sort((a, b) => {
+      if (a.festivalName < b.festivalName) {
+        return -1
+      }
+      if (a.festivalName > b.festivalName) {
+        return 1
+      }
+      return 0
+    })
+    console.log(bandsWithFestivals)
 
 
     console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$')
 
+    let result = "" // hold the reorganized data
+
     sortedRecordLabels.forEach((sortedRecordLabel) => {
       console.log(sortedRecordLabel)
+      result = result + sortedRecordLabel + "\n"
 
       bandsWithRecordLabels.forEach((band) => {
         if(band.recordLabel == sortedRecordLabel) {
           console.log(`  ${band.bandName}`)
+          result = result + "  " + band.bandName + "\n"
           bandsWithFestivals.forEach((bandAndFestival) => {
             if(band.bandName == bandAndFestival.bandName) {
-              console.log(`    ${bandAndFestival.festivalName}`)
+              if(bandAndFestival.festivalName != undefined) {
+                console.log(`    ${bandAndFestival.festivalName}`)
+                result = result + "    " + bandAndFestival.festivalName + "\n"
+              } 
             }
           })
         }
       })
     })
 
+    console.log('%%%%%%%%')
+    console.log(result)
 
-    //res.render('festivals', {festivals: apiRes.data})
+
+    res.render('festivals', {result: result})
   })
 })
 
