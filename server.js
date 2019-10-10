@@ -30,17 +30,24 @@ app.get('/festivals', (req, res) => {
     console.log('##################################')
 
     let recordLabels = []
-    let bandsWithRecordLabels = [] // bands with label record label 
+    let bandsWithRecordLabels = [] // bands with record labels, but some bands don't have recordLabel 
+
+    let bandsWithFestivals = [] // this shows each band attends what festival, but some bands don't attend any festival
 
     festivals.forEach((festival) => { 
       festival.bands.forEach((band) => {
         if(band.recordLabel != undefined && band.recordLabel != '') {
           recordLabels.push(band.recordLabel)
+
           bandsWithRecordLabels.push({
             bandName: band.name, 
-            recordLabel: band.recordLabel, // some bands don't have recordLabel
-            festivalName: festival.name // some bands don't attend any festival, will become undefined here
-          }) 
+            recordLabel: band.recordLabel
+          })
+          
+          bandsWithFestivals.push({
+            bandName: band.name,
+            festivalName: festival.name // some bands don't attend any festival, will become undefined here            
+          })
         }
       }) 
     })
@@ -76,6 +83,11 @@ app.get('/festivals', (req, res) => {
       bandsWithRecordLabels.forEach((band) => {
         if(band.recordLabel == sortedRecordLabel) {
           console.log(`  ${band.bandName}`)
+          bandsWithFestivals.forEach((bandAndFestival) => {
+            if(band.bandName == bandAndFestival.bandName) {
+              console.log(`    ${bandAndFestival.festivalName}`)
+            }
+          })
         }
       })
     })
