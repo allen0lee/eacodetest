@@ -25,7 +25,7 @@ app.get('/festivals', (req, res) => {
 
     let result = "" // hold the reorganized data
 
-    if(festivals != "") { // sometimes api does not return data, gives back "" instead
+    if(festivals != "") { // sometimes api does not return data, gives back empty string instead
       
       festivals.forEach((festival) => {
         console.log(festival.bands)
@@ -57,8 +57,23 @@ app.get('/festivals', (req, res) => {
         }) 
       })
 
-      let sortedRecordLabels = _.uniq(recordLabels.sort())
-      // let sortedRecordLabels = recordLabels.sort()
+      console.log(recordLabels)
+      console.log('@@@@@@@@@@@@@@@@@@')
+
+      let sortedRecordLabels = _.uniq(recordLabels.sort((a, b) => {
+        let nameA = a.toUpperCase() // ignore upper and lowercase
+        let nameB = b.toUpperCase()
+
+        // negative, if first is less than second (should be placed before second)
+        if (nameA < nameB) { 
+          return -1
+        }
+        // positive, if first is greater than second (should be placed after second)
+        if (nameA > nameB) {
+          return 1
+        }
+        return 0 // if two elements are equal
+      }))
       console.log(sortedRecordLabels)
 
       // sort band names in alphabetical order
@@ -94,10 +109,13 @@ app.get('/festivals', (req, res) => {
         result = result + sortedRecordLabel + "\n"
 
         bandsWithRecordLabels.forEach((band) => {
-          if(band.recordLabel == sortedRecordLabel) {
+          // for the current record label, find the bands under its management
+          if(band.recordLabel == sortedRecordLabel) { 
             console.log(`  ${band.bandName}`)
             result = result + "  " + band.bandName + "\n"
+            
             bandsWithFestivals.forEach((bandAndFestival) => {
+              // for the current band, find the festivals it has attended
               if(band.bandName == bandAndFestival.bandName && band.recordLabel == bandAndFestival.recordLabel) { // a band can attend another festival under the management of another record label eg. "Wild Antelop"
                 if(bandAndFestival.festivalName != undefined) {
                   console.log(`    ${bandAndFestival.festivalName}`)
