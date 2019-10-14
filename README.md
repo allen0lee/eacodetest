@@ -36,7 +36,10 @@ This array is the relation between band and festival. It shows which band has at
 d. construct the result in a string and show it in terminal window or a html page
 
 #### 3. How to run this demo
-This demo is built with Node.js.
+This demo is built using Express and Node.js.
 Before running this demo, in the demo directory, type the following in terminal window: npm i  
 Then to run the demo, type: npm start
-Open your browser, type localhost:8080 in address bar, then a home page should appear, click button 'get data' to see the result, or you can see it in the terminal window.     
+Open your browser, type localhost:8080 in address bar, then a home page should appear, click button 'get data' to see the result, or you can see it in the terminal window.
+
+#### 4. Issues
+Sometimes the API stops working if too many requests are being made, as a result, the demo will not respond. Error messages will be shown on terminal. The page needs to be reloaded in order to see the result.

@@ -5,9 +5,7 @@ const _ = require('underscore')
 const logger = require('./logger')
 
 app.set('view engine', 'ejs')
-
 app.use(logger) 
-
 app.use(express.static('public')) 
 
 app.get('/', (req, res) => {
@@ -16,22 +14,16 @@ app.get('/', (req, res) => {
 
 app.get('/festivals', (req, res) => {
   axios.get(`http://eacodingtest.digital.energyaustralia.com.au/api/v1/festivals`).then((apiRes) => {
-    //console.log(apiRes.data)
-    // console.log(apiRes.data[0].name)
-    // console.log(apiRes.data[0].bands)
-
     let festivals = apiRes.data
-    console.log(festivals)
+    // console.log(festivals)
 
     let result = "" // hold the reorganized data
 
     if(festivals != "") { // sometimes api does not return data, gives back empty string instead
       
-      festivals.forEach((festival) => {
-        console.log(festival.bands)
-      }) 
-
-      console.log('##################################')
+      // festivals.forEach((festival) => {
+      //   console.log(festival.bands)
+      // }) 
 
       let recordLabels = []
       let bandsWithRecordLabels = [] // bands with record labels, but some bands don't have recordLabel 
@@ -57,8 +49,7 @@ app.get('/festivals', (req, res) => {
         }) 
       })
 
-      console.log(recordLabels)
-      console.log('@@@@@@@@@@@@@@@@@@')
+      // console.log(recordLabels)
 
       let sortedRecordLabels = _.uniq(recordLabels.sort((a, b) => {
         let nameA = a.toUpperCase() // ignore upper and lowercase
@@ -74,7 +65,7 @@ app.get('/festivals', (req, res) => {
         }
         return 0 // if two elements are equal
       }))
-      console.log(sortedRecordLabels)
+      // console.log(sortedRecordLabels)
 
       // sort band names in alphabetical order
       bandsWithRecordLabels.sort((a, b) => {
@@ -86,9 +77,7 @@ app.get('/festivals', (req, res) => {
         }
         return 0
       })
-      console.log(bandsWithRecordLabels)
-
-      console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+      // console.log(bandsWithRecordLabels)
 
       // sort festival names in alphabetical order
       bandsWithFestivals.sort((a, b) => {
@@ -102,33 +91,35 @@ app.get('/festivals', (req, res) => {
       })
       console.log(bandsWithFestivals)
 
-      console.log('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$')
-
       sortedRecordLabels.forEach((sortedRecordLabel) => {
-        console.log(sortedRecordLabel)
+        // console.log(sortedRecordLabel)
         result = result + sortedRecordLabel + "\n"
 
         bandsWithRecordLabels.forEach((band) => {
           // for the current record label, find the bands under its management
           if(band.recordLabel == sortedRecordLabel) { 
-            console.log(`  ${band.bandName}`)
+            // console.log(`  ${band.bandName}`)
             result = result + "  " + band.bandName + "\n"
             
             bandsWithFestivals.forEach((bandAndFestival) => {
               // for the current band, find the festivals it has attended
               if(band.bandName == bandAndFestival.bandName && band.recordLabel == bandAndFestival.recordLabel) { // a band can attend another festival under the management of another record label eg. "Wild Antelop"
                 if(bandAndFestival.festivalName != undefined) {
-                  console.log(`    ${bandAndFestival.festivalName}`)
+                  // console.log(`    ${bandAndFestival.festivalName}`)
                   result = result + "    " + bandAndFestival.festivalName + "\n"
                 } 
               }
             })
           }
         })
+        result = result + "\n"
       })
 
-      console.log('%%%%%%%%')
+      console.log('Restructured music festival data:')
       console.log(result)      
+    } else if(festivals == "") {
+      result = "music festival data is empty"
+      console.log(result)
     }
 
     res.render('festivals', {result: result})
